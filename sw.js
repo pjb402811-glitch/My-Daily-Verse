@@ -1,7 +1,8 @@
-const CACHE_NAME = 'malssum-cache-v2'; // Cache version updated
+const CACHE_NAME = 'malssum-cache-v3'; // Cache version updated
 const urlsToCache = [
   '/',
   '/index.html',
+  '/index.tsx', // Add main script to initial cache
   '/manifest.json',
   '/icon.png',
   '/icon-192x192.png',
@@ -14,9 +15,10 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        console.log('Opened cache and caching core assets');
         return cache.addAll(urlsToCache);
       })
+      .then(() => self.skipWaiting()) // Force the waiting service worker to become the active service worker.
   );
 });
 
@@ -35,6 +37,7 @@ self.addEventListener('fetch', event => {
                 return cachedResponse;
             }
 
+            // Not in cache - fetch from network
             return fetch(event.request).then(
                 networkResponse => {
                     // Check if we received a valid response to cache.
@@ -57,14 +60,15 @@ self.addEventListener('fetch', event => {
                     return networkResponse;
                 }
             ).catch(error => {
-                console.error('Fetch failed; returning offline page instead.', error);
-                // Optionally, return a fallback offline page here.
+                console.error('Fetch failed:', error);
+                // If the fetch fails (e.g., offline), you might want to return a fallback page.
+                // For now, we'll just let the browser handle the error.
             });
         })
     );
 });
 
-// Update a service worker
+// Update a service worker and clean up old caches
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -77,6 +81,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // Take control of all open pages.
   );
 });
