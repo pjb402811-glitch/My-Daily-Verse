@@ -1,0 +1,29 @@
+{
+  "short_name": "말씀 처방",
+  "name": "말씀 처방: AI 성경 & 찬양 추천",
+  "description": "지친 마음에 힘이 되는 말씀을 처방해 드립니다. 당신의 상황을 입력하면 AI가 맞춤 성경 구절과 찬양을 추천해 드립니다.",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a"
+}
