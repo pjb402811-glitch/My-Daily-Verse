@@ -1,8 +1,12 @@
-const CACHE_NAME = 'malssum-cache-v1';
+const CACHE_NAME = 'malssum-cache-v2'; // Cache version updated
 const urlsToCache = [
   '/',
   '/index.html',
-  // Other assets will be cached on-the-fly by the fetch handler.
+  '/manifest.json',
+  '/icon.png',
+  '/icon-192x192.png',
+  '/icon-512x512.png',
+  '/apple-touch-icon.png'
 ];
 
 // Install a service worker
@@ -25,33 +29,37 @@ self.addEventListener('fetch', event => {
 
     event.respondWith(
         caches.match(event.request)
-        .then(response => {
+        .then(cachedResponse => {
             // Cache hit - return response
-            if (response) {
-                return response;
+            if (cachedResponse) {
+                return cachedResponse;
             }
 
             return fetch(event.request).then(
-                (response) => {
-                    // Check if we received a valid response
-                    if (!response || response.status !== 200 || response.type === 'opaque') {
-                        return response;
+                networkResponse => {
+                    // Check if we received a valid response to cache.
+                    // We will cache opaque responses to allow cross-origin assets (like from esm.sh) to work offline.
+                    if (!networkResponse || (networkResponse.status !== 200 && networkResponse.type !== 'opaque')) {
+                        return networkResponse;
                     }
 
                     // IMPORTANT: Clone the response. A response is a stream
                     // and because we want the browser to consume the response
                     // as well as the cache consuming the response, we need
                     // to clone it so we have two streams.
-                    const responseToCache = response.clone();
+                    const responseToCache = networkResponse.clone();
 
                     caches.open(CACHE_NAME)
                         .then(cache => {
                             cache.put(event.request, responseToCache);
                         });
 
-                    return response;
+                    return networkResponse;
                 }
-            );
+            ).catch(error => {
+                console.error('Fetch failed; returning offline page instead.', error);
+                // Optionally, return a fallback offline page here.
+            });
         })
     );
 });
@@ -64,6 +72,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
