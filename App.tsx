@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import type { Recommendation, DiaryEntries, BibleVerse } from './types';
 import { getRecommendations } from './services/geminiService';
@@ -256,7 +257,7 @@ export default function App(): React.ReactNode {
         </div>
       </main>
       <footer className="text-center py-6 text-sm text-slate-500 dark:text-slate-400">
-        <p>Powered by Google Gemini</p>
+        <p>Made by PJB</p>
       </footer>
        <ApiKeyModal
         isOpen={isApiKeyModalOpen}

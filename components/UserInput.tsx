@@ -1,6 +1,7 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import type { DiaryEntry } from '../types';
-import { BookmarkIcon, ChevronDownIcon, XCircleIcon } from './IconComponents';
+import { BookmarkIcon, ChevronDownIcon, XCircleIcon, ChevronUpIcon } from './IconComponents';
 
 interface DiaryEntryViewProps {
   entry: DiaryEntry | null;
@@ -82,14 +83,14 @@ export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextCha
             value={text}
             onChange={(e) => onTextChange(e.target.value)}
             placeholder="오늘 하루는 어떠셨나요? 당신의 이야기를 자유롭게 들려주세요."
-            className="w-full h-48 p-4 text-2xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-150 ease-in-out"
+            className="w-full h-48 p-4 text-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-150 ease-in-out"
             disabled={isLoading}
           />
         </div>
         
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium mb-2 text-slate-600 dark:text-slate-400">오늘의 감정</label>
+            <label className="block text-sm font-medium mb-2 text-slate-600 dark:text-slate-400">오늘 나의 감정</label>
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
@@ -104,8 +105,8 @@ export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextCha
                 <ChevronDownIcon className={`w-5 h-5 text-slate-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {isDropdownOpen && (
-                <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                  <div className="p-2 grid grid-cols-2 gap-2" role="listbox">
+                <div className="absolute z-10 mt-1 w-full bg-white dark:bg-slate-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 flex flex-col">
+                  <div className="max-h-60 overflow-y-auto p-2 grid grid-cols-2 gap-2" role="listbox">
                     {emotionOptions.map((emotion) => (
                       <label key={emotion.name} className="flex items-center space-x-2 p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer">
                         <input
@@ -117,6 +118,16 @@ export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextCha
                         <span className="text-sm text-slate-700 dark:text-slate-200">{emotion.label}</span>
                       </label>
                     ))}
+                  </div>
+                  <div className="border-t border-slate-200 dark:border-slate-700 flex justify-center py-1">
+                    <button
+                        type="button"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="p-1 rounded-full text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        aria-label="감정 선택 닫기"
+                    >
+                        <ChevronUpIcon className="w-6 h-6" />
+                    </button>
                   </div>
                 </div>
               )}
