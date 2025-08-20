@@ -10,7 +10,7 @@ export const AppHeader: React.FC = () => {
           오늘 하루는 어떠셨나요? <br /> 당신의 이야기를 들려주세요.
         </p>
         <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            솔직하게 적어주시면 힘이 되는 말씀을 찾아 드립니다.
+            당신을 위한 말씀과 찬송을 찾아 드립니다
         </p>
     </header>
   )
