@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { ArrowDownTrayIcon, ArrowUpTrayIcon, KeyIcon, SunIcon, MoonIcon } from './IconComponents';
 import type { DiaryEntries } from '../types';
@@ -7,9 +8,9 @@ interface SettingsMenuProps {
   onClose: () => void;
   entries: DiaryEntries;
   onImport: (entries: DiaryEntries) => void;
-  onOpenApiKeyModal: () => void;
   theme: string;
   onThemeToggle: () => void;
+  onOpenApiKeyModal: () => void;
 }
 
 // Helper to validate imported data
@@ -26,7 +27,7 @@ const isValidDiaryData = (data: any): data is DiaryEntries => {
     );
 };
 
-export const SettingsMenu: React.FC<SettingsMenuProps> = ({ isOpen, onClose, entries, onImport, onOpenApiKeyModal, theme, onThemeToggle }) => {
+export const SettingsMenu: React.FC<SettingsMenuProps> = ({ isOpen, onClose, entries, onImport, theme, onThemeToggle, onOpenApiKeyModal }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -137,7 +138,10 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({ isOpen, onClose, ent
         </button>
         <div className="border-t border-slate-200 dark:border-slate-700 my-1"></div>
         <button
-            onClick={onOpenApiKeyModal}
+            onClick={() => {
+              onOpenApiKeyModal();
+              onClose();
+            }}
             className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
             role="menuitem"
         >

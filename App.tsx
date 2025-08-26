@@ -40,7 +40,7 @@ export default function App(): React.ReactNode {
     return 'dark';
   });
   
-  // Load entries from localStorage on mount
+  // Load entries from localStorage and check for API key on mount
   useEffect(() => {
     try {
       const savedEntries = localStorage.getItem(DIARY_STORAGE_KEY);
@@ -49,6 +49,10 @@ export default function App(): React.ReactNode {
       }
     } catch (e) {
       console.error("Failed to load diary entries from localStorage", e);
+    }
+    
+    if (!localStorage.getItem('GEMINI_API_KEY')) {
+        setIsApiKeyModalOpen(true);
     }
   }, []);
 
@@ -121,14 +125,28 @@ export default function App(): React.ReactNode {
     }));
   }, [dateKey]);
 
+  const handleSaveApiKey = useCallback((apiKey: string) => {
+    try {
+      localStorage.setItem('GEMINI_API_KEY', apiKey);
+      setIsApiKeyModalOpen(false);
+      setError(null); // Clear previous API key errors
+      if (apiKey) {
+        alert("API 키가 성공적으로 저장되었습니다.");
+      }
+    } catch (e) {
+      console.error("Failed to save API key to localStorage", e);
+      setError("API 키를 저장하는 데 실패했습니다.");
+    }
+  }, []);
+
   const handleGetRecommendation = useCallback(async () => {
     const apiKey = localStorage.getItem('GEMINI_API_KEY');
     if (!apiKey) {
-      setError("Google API 키가 설정되지 않았습니다. 우측 상단 설정 메뉴에서 API 키를 입력해주세요.");
+      setError("Google API 키를 먼저 설정해주세요. 설정 메뉴에서 입력할 수 있습니다.");
       setIsApiKeyModalOpen(true);
       return;
     }
-
+    
     const inputText = currentEntry?.text;
     if (!inputText || !inputText.trim()) {
       setError("일기 내용을 입력해주세요.");
@@ -174,18 +192,6 @@ export default function App(): React.ReactNode {
     }
   }, []);
 
-  const handleApiKeySave = useCallback((apiKey: string) => {
-    if (apiKey) {
-      localStorage.setItem('GEMINI_API_KEY', apiKey);
-      alert('API 키가 저장되었습니다.');
-      setError(null); // Clear API key error after saving
-    } else {
-      localStorage.removeItem('GEMINI_API_KEY');
-      alert('API 키가 삭제되었습니다.');
-    }
-    setIsApiKeyModalOpen(false);
-  }, []);
-
   const handleThemeToggle = useCallback(() => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
     setIsSettingsMenuOpen(false); // Close menu on selection
@@ -194,6 +200,11 @@ export default function App(): React.ReactNode {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
+      <ApiKeyModal
+        isOpen={isApiKeyModalOpen}
+        onClose={() => setIsApiKeyModalOpen(false)}
+        onSave={handleSaveApiKey}
+      />
       <main className="relative max-w-7xl mx-auto px-4 py-8 md:py-12">
         <div className="absolute top-4 right-4 z-10">
             <button
@@ -209,12 +220,9 @@ export default function App(): React.ReactNode {
                 onClose={() => setIsSettingsMenuOpen(false)}
                 entries={entries}
                 onImport={handleImportEntries}
-                onOpenApiKeyModal={() => {
-                    setIsApiKeyModalOpen(true);
-                    setIsSettingsMenuOpen(false);
-                }}
                 theme={theme}
                 onThemeToggle={handleThemeToggle}
+                onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
             />
         </div>
         
@@ -259,11 +267,6 @@ export default function App(): React.ReactNode {
       <footer className="text-center py-6 text-sm text-slate-500 dark:text-slate-400">
         <p>Made by PJB</p>
       </footer>
-       <ApiKeyModal
-        isOpen={isApiKeyModalOpen}
-        onClose={() => setIsApiKeyModalOpen(false)}
-        onSave={handleApiKeySave}
-      />
     </div>
   );
 }

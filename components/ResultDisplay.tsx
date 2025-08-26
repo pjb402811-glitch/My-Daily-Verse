@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Recommendation, BibleVerse } from '../types';
 import { BibleIcon, MusicNoteIcon, YouTubeIcon, SparklesIcon, BookmarkIcon } from './IconComponents';
@@ -22,9 +21,10 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onSaveVers
     <div className="space-y-8">
       {/* Bible Verses Section */}
       <div>
-        <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center">
+        <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-baseline">
           <BibleIcon className="w-7 h-7 mr-3 text-sky-500" />
-          오늘의 말씀 처방
+          <span>오늘의 말씀 처방</span>
+          <span className="ml-2 text-base font-medium text-slate-500 dark:text-slate-400">(새번역)</span>
         </h2>
         <div className="space-y-4">
           {result.verses.map((verse, index) => {
