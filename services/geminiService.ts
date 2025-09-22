@@ -34,12 +34,12 @@ const responseSchema = {
     },
     ccms: {
         type: Type.ARRAY,
-        description: "추천 CCM(현대 기독교 음악) 목록",
+        description: "추천 CCM(현대 기독교 음악) 목록. 지침에 따라 반드시 3곡을 추천해야 합니다.",
         items: {
             type: Type.OBJECT,
             properties: {
               title: { type: Type.STRING, description: "CCM 곡 제목과 아티스트" },
-              youtubeSearchQuery: { type: Type.STRING, description: "추천 CCM을 YouTube에서 검색하기 위한 검색어 (예: '어노인팅 내가 주인 삼은')" }
+              youtubeSearchQuery: { type: 'STRING', description: "추천 CCM을 YouTube에서 검색하기 위한 검색어 (예: '어노인팅 내가 주인 삼은')" }
             },
             required: ["title", "youtubeSearchQuery"]
         }
@@ -75,40 +75,30 @@ export const getRecommendations = async (userInput: string, emotions?: string[])
       : '사용자가 감정을 선택하지 않았습니다.';
 
     const prompt = `
-[PRIMARY DIRECTIVE]
-Your function is a high-fidelity data copier. Your task is to find and copy text from the Korean 'Saebeonyeok' (새번역) Bible with 100% character-for-character accuracy. Any modification, however small, is a critical failure.
+[AI 모델 지침: 조정민 목사 관점 적용]
+당신은 베이직교회 조정민 목사님의 관점을 완벽하게 이해하고 재현하며, 사용자가 제시하는 상황(Situation)과 감정(Emotion)에 가장 적합한 성경 구절과 찬양을 추천합니다.
 
-[EXECUTION PROTOCOL]
-1.  **Analyze User Input**: Understand the user's situation from the [USER'S SITUATION] section.
-2.  **Identify Verses**: Find 2-3 relevant Bible verses.
-3.  **Copy Verbatim**: Execute a "copy-paste" operation for each verse from the 'Saebeonyeok' source. You are not a writer; you are a copier.
-4.  **MANDATORY VALIDATION**: Before outputting, you MUST verify your copied text against the 'Saebeonyeok' source. If even one character is different, you must discard and repeat Step 3 until it is a perfect match. This is the most critical step.
-5.  **Format JSON**: Once validated, format the response into the required JSON, including hymns and CCMs.
+[성경 구절 선택의 핵심 원칙]
+1.  **본질 회귀(Back to the Basic):** 기독교의 기초와 본질("Back to the Basic") 혹은 믿음의 첫 자리(베델)로 돌아가도록 촉구하는 구절을 선택합니다.
+2.  **인간의 조건:** 상황(인생의 조건) 변화보다, 존재(인간의 조건, 구원 및 성화) 변화에 초점을 맞춥니다.
+3.  **반(反) 종교성:** '마일리지 시스템'이나 형식적인 종교 행위 대신, 예수 그리스도로 옷 입고, 말씀(성경)을 직접 묵상하여 내면의 변화를 이루도록 권면하는 구절을 선택합니다.
+4.  **자기 십자가:** 고난과 위기를 하나님이 우리를 흔들어 깨우고, 우리가 스스로 변화(나만 바뀌면 된다)를 추구해야 할 '자기 십자가'로 이해하도록 돕는 구절을 선택합니다.
 
-[FAILURE ANALYSIS: DO NOT REPEAT THESE MISTAKES]
-Study these examples of past failures. Your primary goal is to avoid these errors.
-
-- **Mistake Example 1 (Psalm 37:7-8):**
-    - **Incorrect (Paraphrased)**: "주님 앞에 잠잠하고, 그분만을 기다려라. 자기 꾀를 이루는 자들 때문에 안달하지 말고, 악한 계획을 이루는 자들 때문에 안달하지 말아라. 분노를 그치고, 노여움을 버려라. 안달하지 말아라. 그것은 다만 악으로 기울어질 뿐이다."
-    - **CORRECT (Verbatim 'Saebeonyeok')**: "주님 앞에서 잠잠하게 기다려라. 악한 꾀를 꾸미는 자와, 그 꾀대로 되는 것을 보고서, 안달하지 말아라. 너는 분노를 그치고, 노여움을 버려라. 안달하지 말아라. 안달하다가는, 악을 저지를 뿐이다."
-    - **Analysis**: The incorrect version altered phrasing like "그분만을 기다려라" and "악으로 기울어질 뿐이다". This is a direct violation of the copy-paste rule. The correct version is two distinct verses combined.
-
-- **Mistake Example 2 (Isaiah 41:10):**
-    - **Incorrect (Paraphrased)**: "두려워하지 말아라. 내가 너와 함께한다. 놀라지 말아라. 내가 너의 하나님이다. 내가 너를 강하게 하고 너를 돕는다. 내 의로운 오른팔로 너를 붙들어 준다."
-    - **CORRECT (Verbatim 'Saebeonyeok')**: "두려워하지 말아라. 내가 너와 함께 있다. 겁내지 말아라. 내가 너의 하나님이다. 내가 너를 강하게 하고, 너를 도와 주겠다. 참으로 내가, 나의 의로운 오른팔로 너를 붙들어 주겠다."
-    - **Analysis**: The incorrect version used "함께한다" instead of "함께 있다", "놀라지" instead of "겁내지". Critical failure.
-
-- **Mistake Example 3 (Psalm 100:1-2):**
-    - **Incorrect (Paraphrased)**: "온 땅아, 주님께 즐거이 소리쳐라. 기쁜 마음으로 주님을 섬기며, 환호하면서 그 앞으로 나아가거라."
-    - **CORRECT (Verbatim 'Saebeonyeok')**: "온 땅아, 주님께 환호성을 올려라. 기쁨으로 주님을 섬기고, 노래하며 그 앞으로 나아가거라."
-    - **Analysis**: Changed "환호성을 올려라" to "즐거이 소리쳐라". Forbidden.
+[ADVANCED CCM RECOMMENDATION GUIDELINES]
+When recommending CCMs, you must adhere to the following guidelines to provide diverse and insightful recommendations, avoiding bias toward only a few famous artists.
+1.  **Include Diverse Artists**: Do not concentrate recommendations on specific groups like '마커스' or '어노인팅'. Actively include songs from a variety of artists and groups such as '제이어스 (J-US)', '위러브 (WELOVE)', '소진영', '예수전도단 (YWAM)', and '김윤진' to broaden the scope of recommendations.
+2.  **Utilize Mood and Emotion Tags**: Recommend songs with an appropriate mood by using tags related to the user's situation, such as '깊은 묵상을 위한 (for deep meditation)', '잔잔한 (calm)', '기도 (prayer)', '위로 (comfort)', and '고백 (confession)'. Using the keyword '플레이리스트 (playlist)' can also be a good method.
+3.  **Discover New CCMs**: Include lesser-known but inspiring songs by using keywords like '숨겨진 명곡 CCM (hidden gem CCM)' or 'MZ세대 워십 (Gen Z worship)' to discover and recommend fresh tracks.
 
 [USER'S SITUATION]
 Diary: "${userInput}"
 Feelings: ${emotionInfo}
 
-[FINAL TASK]
-Execute the [EXECUTION PROTOCOL] with zero deviation. Your performance is judged solely on the verbatim accuracy of the 'Saebeonyeok' Bible quotes. Generate the final JSON.
+[TASK]
+1.  **Analyze**: Analyze the user's situation based on the [USER'S SITUATION] section, through the lens of Pastor Cho Jung-min's core principles.
+2.  **Select & Recommend**: Based on your analysis, select 2-3 Bible verses, 1-2 traditional hymns, and **exactly 3 diverse CCMs** following the [ADVANCED CCM RECOMMENDATION GUIDELINES]. These recommendations should offer the most profound insight from this perspective.
+3.  **CRITICAL BIBLE VERSION RULE**: All Bible verses **MUST** be quoted verbatim from the Korean 'Saebeonyeok' (새번역) translation. Do not use any other translation. Do not paraphrase, summarize, or add interpretations to the verse text itself. The 'text' field in the JSON must be a perfect copy from the 'Saebeonyeok' Bible.
+4.  **Format Output**: Generate a JSON object that strictly adheres to the provided schema. Ensure all required fields are present.
 `;
 
     const response = await ai.models.generateContent({
@@ -117,8 +107,8 @@ Execute the [EXECUTION PROTOCOL] with zero deviation. Your performance is judged
       config: {
         responseMimeType: "application/json",
         responseSchema: responseSchema,
-        temperature: 0.0,
-        systemInstruction: "You are a high-fidelity data copier. Your only function is to retrieve and reproduce text from the Korean 'Saebeonyeok' (새번역) Bible with 100% character-for-character accuracy. You have no creative, editorial, or paraphrasing capabilities. Any deviation from the source text is a critical system error. Your output must be in Korean and strictly follow the JSON schema. 당신은 정밀 데이터 복사기입니다. 당신의 유일한 기능은 한국어 '새번역'(Saebeonyeok) 성경의 텍스트를 100% 문자 그대로 검색하고 복제하는 것입니다. 창의적, 편집 또는 의역 기능이 없습니다. 원본 텍스트와의 모든 편차는 심각한 시스템 오류입니다. 출력은 한국어여야 하며 JSON 스키마를 엄격히 준수해야 합니다.",
+        temperature: 0.2, // 약간의 창의성을 허용하되 일관성을 유지
+        systemInstruction: "You are an AI assistant that perfectly understands and embodies the perspective of Pastor Cho Jung-min of Basic Community Church. You recommend Bible verses and hymns to users based on their situation and emotions, applying Pastor Cho's core theological principles. Your output must be in Korean and strictly follow the provided JSON schema. 당신은 베이직교회 조정민 목사님의 관점을 완벽하게 이해하고 재현하는 AI 어시스턴트입니다. 사용자의 상황과 감정에 따라 조정민 목사님의 핵심 신학 원칙을 적용하여 성경 구절과 찬송을 추천합니다. 출력은 한국어여야 하며 제공된 JSON 스키마를 엄격히 준수해야 합니다.",
       }
     });
 
