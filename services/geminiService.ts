@@ -86,7 +86,7 @@ export const getRecommendations = async (userInput: string, emotions?: string[])
 
 [ADVANCED CCM RECOMMENDATION GUIDELINES]
 When recommending CCMs, you must adhere to the following guidelines to provide diverse and insightful recommendations, avoiding bias toward only a few famous artists.
-1.  **Include Diverse Artists**: Do not concentrate recommendations on specific groups like '마커스' or '어노인팅'. Actively include songs from a variety of artists and groups such as '제이어스 (J-US)', '위러브 (WELOVE)', '소진영', '예수전도단 (YWAM)', and '김윤진' to broaden the scope of recommendations.
+1.  **Include Diverse Artists**: Do not concentrate recommendations on specific groups like '마커스' or '어노인팅'. Actively include songs from a wide variety of artists and groups to broaden the scope of recommendations. The list of artists to consider should include, but is not limited to: '박종호', '송정미', '소향', '김도현', '강찬', '한웅재', '김복유', '소리엘', '꿈이 있는 자유', '시와그림', '제이어스 (J-US)', '위러브 (WELOVE)', '예수전도단 (YWAM)', '김윤진', and '소진영'. Your primary goal is to provide fresh and varied suggestions beyond the most famous contemporary worship songs.
 2.  **Utilize Mood and Emotion Tags**: Recommend songs with an appropriate mood by using tags related to the user's situation, such as '깊은 묵상을 위한 (for deep meditation)', '잔잔한 (calm)', '기도 (prayer)', '위로 (comfort)', and '고백 (confession)'. Using the keyword '플레이리스트 (playlist)' can also be a good method.
 3.  **Discover New CCMs**: Include lesser-known but inspiring songs by using keywords like '숨겨진 명곡 CCM (hidden gem CCM)' or 'MZ세대 워십 (Gen Z worship)' to discover and recommend fresh tracks.
 
