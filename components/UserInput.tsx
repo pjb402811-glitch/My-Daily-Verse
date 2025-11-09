@@ -7,6 +7,7 @@ interface DiaryEntryViewProps {
   entry: DiaryEntry | null;
   onTextChange: (text: string) => void;
   onEmotionChange: (emotions: string[]) => void;
+  onGratitudeChange: (text: string) => void;
   onSubmit: () => void;
   isLoading: boolean;
 }
@@ -25,8 +26,9 @@ const emotionOptions = [
     { name: 'disappointment', label: '실망' },
 ];
 
-export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextChange, onEmotionChange, onSubmit, isLoading }) => {
+export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextChange, onEmotionChange, onGratitudeChange, onSubmit, isLoading }) => {
   const text = entry?.text || '';
+  const gratitudeText = entry?.gratitude || '';
   const savedVerse = entry?.savedVerse;
   const selectedEmotions = entry?.emotions || [];
 
@@ -89,6 +91,20 @@ export const DiaryEntryView: React.FC<DiaryEntryViewProps> = ({ entry, onTextCha
         </div>
         
         <div className="space-y-3">
+          <div>
+            <label htmlFor="gratitudeInput" className="block text-lg font-semibold mb-2 text-slate-800 dark:text-slate-100">
+              그럼에도 오늘 감사할 것들
+            </label>
+            <textarea
+              id="gratitudeInput"
+              aria-label="감사한 내용을 입력하세요"
+              value={gratitudeText}
+              onChange={(e) => onGratitudeChange(e.target.value)}
+              placeholder="어려움 속에서도 배우자, 자녀, 부모님, 친구 등 일상에서 감사한 것을 찾아보세요"
+              className="w-full h-24 p-3 text-base bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-150 ease-in-out resize-y"
+              disabled={isLoading}
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium mb-2 text-slate-600 dark:text-slate-400">오늘 나의 감정</label>
             <div className="relative" ref={dropdownRef}>

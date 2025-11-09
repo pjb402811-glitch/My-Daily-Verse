@@ -22,6 +22,7 @@ export interface DiaryEntry {
   text: string;
   savedVerse: BibleVerse | null;
   emotions?: string[];
+  gratitude?: string;
 }
 
 export type DiaryEntries = Record<string, DiaryEntry>;

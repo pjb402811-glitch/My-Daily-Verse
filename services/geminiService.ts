@@ -48,7 +48,7 @@ const responseSchema = {
   required: ["verses", "traditionalHymns", "ccms"]
 };
 
-export const getRecommendations = async (userInput: string, emotions?: string[]): Promise<Recommendation> => {
+export const getRecommendations = async (userInput: string, emotions?: string[], gratitude?: string): Promise<Recommendation> => {
   const apiKey = localStorage.getItem('GEMINI_API_KEY');
   if (!apiKey) {
     throw new Error("Google API 키가 설정되지 않았습니다. 설정 메뉴에서 API 키를 입력해주세요.");
@@ -74,6 +74,10 @@ export const getRecommendations = async (userInput: string, emotions?: string[])
       ? `참고로 사용자의 오늘의 감정은 '${emotions.map(e => emotionKoreanMap[e] || e).join(', ')}'입니다.`
       : '사용자가 감정을 선택하지 않았습니다.';
 
+    const gratitudeInfo = gratitude && gratitude.trim().length > 0
+      ? `어려움 속에서도 사용자가 감사하게 생각하는 점은 다음과 같습니다: '${gratitude}'`
+      : '사용자가 감사한 점을 별도로 입력하지 않았습니다.';
+
     const prompt = `
 [AI 모델 지침: 조정민 목사 관점 적용]
 당신은 베이직교회 조정민 목사님의 관점을 완벽하게 이해하고 재현하며, 사용자가 제시하는 상황(Situation)과 감정(Emotion)에 가장 적합한 성경 구절과 찬양을 추천합니다.
@@ -93,6 +97,7 @@ When recommending CCMs, you must adhere to the following guidelines to provide d
 [USER'S SITUATION]
 Diary: "${userInput}"
 Feelings: ${emotionInfo}
+Gratitude: ${gratitudeInfo}
 
 [TASK]
 1.  **Analyze**: Analyze the user's situation based on the [USER'S SITUATION] section, through the lens of Pastor Cho Jung-min's core principles.

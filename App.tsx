@@ -100,6 +100,19 @@ export default function App(): React.ReactNode {
         };
     });
   }, [dateKey]);
+  
+  const handleGratitudeChange = useCallback((gratitude: string) => {
+    setEntries(prev => {
+        const existingEntry = prev[dateKey] || { text: '', savedVerse: null };
+        return {
+            ...prev,
+            [dateKey]: {
+                ...existingEntry,
+                gratitude,
+            },
+        };
+    });
+  }, [dateKey]);
 
   const handleEmotionChange = useCallback((emotions: string[]) => {
     setEntries(prev => {
@@ -121,6 +134,7 @@ export default function App(): React.ReactNode {
         text: prev[dateKey]?.text || '',
         savedVerse: verse,
         emotions: prev[dateKey]?.emotions,
+        gratitude: prev[dateKey]?.gratitude,
       },
     }));
   }, [dateKey]);
@@ -158,7 +172,7 @@ export default function App(): React.ReactNode {
     setRecommendation(null);
 
     try {
-      const result = await getRecommendations(inputText, currentEntry?.emotions);
+      const result = await getRecommendations(inputText, currentEntry?.emotions, currentEntry?.gratitude);
       setRecommendation(result);
     } catch (err) {
       console.error(err);
@@ -243,6 +257,7 @@ export default function App(): React.ReactNode {
                     entry={currentEntry}
                     onTextChange={handleTextChange}
                     onEmotionChange={handleEmotionChange}
+                    onGratitudeChange={handleGratitudeChange}
                     onSubmit={handleGetRecommendation}
                     isLoading={isLoading}
                 />
